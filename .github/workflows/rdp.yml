@@ -6,16 +6,26 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Download ngrok
+      - name: Download and Setup ngrok
         run: |
+          # تحميل الملف المضغوط
           Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-          Expand-Archive ngrok.zip
-          ./ngrok.exe authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+          
+          # فك الضغط في الفولدر الحالي مباشرة بدون إنشاء فولدرات فرعية
+          Expand-Archive ngrok.zip -DestinationPath . -Force
+          
+          # التأكيد على تفعيل التوكن (استخدمنا .\ للأمان في الـ PowerShell)
+          .\ngrok.exe authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
 
       - name: Enable RDP
         run: |
+          # إنشاء المستخدم وصلاحيات الأدمن
           net user kamel123 MyStrong123 /add
           net localgroup administrators kamel123 /add
+          
+          # تفعيل الـ RDP في الويندوز والفايروال
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          ./ngrok.exe tcp 3389
+          
+          # تشغيل النفق الخاص بالـ RDP
+          .\ngrok.exe tcp 3389
