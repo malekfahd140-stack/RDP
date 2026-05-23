@@ -16,7 +16,12 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-      - name: Start RDP Tunnel (Pinggy)
+      - name: Setup tmate Session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: false
+
+      - name: Keep Alive
         run: |
-          # تشغيل النفق باستخدام الخادم الصحيح للـ TCP
-          ssh -T -N -o StrictHostKeyChecking=no -R 0:127.0.0.1:3389 a.pinggy.io
+          # سكريبت لمنع السيرفر من الإغلاق التلقائي ومواصلة تشغيل الـ RDP
+          while ($true) { Start-Sleep -Seconds 60 }
