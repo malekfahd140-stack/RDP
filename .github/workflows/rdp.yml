@@ -6,18 +6,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Download and Setup ngrok
-        run: |
-          # تحميل الملف المضغوط
-          Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-          
-          # فك الضغط في الفولدر الحالي مباشرة بدون إنشاء فولدرات فرعية
-          Expand-Archive ngrok.zip -DestinationPath . -Force
-          
-          # التأكيد على تفعيل التوكن (استخدمنا .\ للأمان في الـ PowerShell)
-          .\ngrok.exe authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-      - name: Enable RDP
+      - name: Enable RDP and Create User
         run: |
           # إنشاء المستخدم وصلاحيات الأدمن
           net user kamel123 MyStrong123 /add
@@ -26,6 +15,8 @@ jobs:
           # تفعيل الـ RDP في الويندوز والفايروال
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          
-          # تشغيل النفق الخاص بالـ RDP
-          .\ngrok.exe tcp 3389
+
+      - name: Start RDP Tunnel (Pinggy)
+        run: |
+          # تشغيل النفق باستخدام SSH المدمج في الويندوز بدون أي برامج خارجية
+          ssh -o StrictHostKeyChecking=no -R 0:127.0.0.1:3389 rdp.pinggy.io
