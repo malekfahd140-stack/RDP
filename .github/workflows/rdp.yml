@@ -18,5 +18,5 @@ jobs:
 
       - name: Start RDP Tunnel (Pinggy)
         run: |
-          # تشغيل النفق باستخدام SSH المدمج في الويندوز بدون أي برامج خارجية
-          ssh -o StrictHostKeyChecking=no -R 0:127.0.0.1:3389 rdp.pinggy.io
+          # تشغيل النفق باستخدام الخادم الصحيح للـ TCP
+          ssh -T -N -o StrictHostKeyChecking=no -R 0:127.0.0.1:3389 a.pinggy.io
