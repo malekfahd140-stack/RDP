@@ -6,23 +6,16 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Download ngrok (تحميل وإعداد إنغروك)
+      - name: Download ngrok
         run: |
-          # 1. تحميل ملف الـ Zip
           Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-          
-          # 2. فك الضغط مباشرة في المجلد الحالي (هذا هو التعديل المهم)
-          Expand-Archive ngrok.zip -DestinationPath .
-          
-          # 3. تفعيل رمز التحقق
-          ./ngrok.exe authtoken 2jRDuZgdIfGuJbsFEqfbFGvrTEw_4FvfX7k3EdeWj8bHBkqh6
+          Expand-Archive ngrok.zip
+          ./ngrok.exe authtoken 3E8EMdDaU0RUTsLus0ERcGP8IP7_5veZw3HFQXv8uz67wC1d
 
-      - name: Enable RDP (تفعيل سطح المكتب عن بعد وتشغيل النفق)
+      - name: Enable RDP
         run: |
           net user kamel123 MyStrong123 /add
           net localgroup administrators kamel123 /add
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          
-          # تشغيل السيرفر على منفذ الـ RDP
           ./ngrok.exe tcp 3389
